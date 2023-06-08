@@ -1,0 +1,6 @@
+setup.py
+Setlistify.egg-info/PKG-INFO
+Setlistify.egg-info/SOURCES.txt
+Setlistify.egg-info/dependency_links.txt
+Setlistify.egg-info/requires.txt
+Setlistify.egg-info/top_level.txt

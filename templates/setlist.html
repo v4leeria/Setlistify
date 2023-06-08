@@ -1,0 +1,103 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{{ title }}</title>
+</head>
+
+<body>
+
+    {% from "setlistContainer.html" import setlistContainer with context %}
+
+    <script>
+
+        var activeSetlist;
+
+
+        function showContent(id) {
+            // set all of the other ones to invisible
+            for (let i = 0; i < document.querySelectorAll(".setlistContainer").length; i++) {
+                document.querySelectorAll(".setlistContainer")[i].style.display = "none";
+            }
+            document.getElementById(id).style.display = 'inline-block';
+            document.getElementById('downloadPicButton').style.display = 'inline-block';
+            activeSetlist = id;
+        }
+
+        function hiddenClone(element) {
+            // Create clone of element
+            var clone = element.cloneNode(true);
+
+            // Position element relatively within the
+            // body but still out of the viewport
+            var style = clone.style;
+            style.position = "relative";
+            style.top = window.innerHeight + "px";
+            style.left = 0;
+            // Append clone to body and return the clone
+            document.body.appendChild(clone);
+            return clone;
+        }
+
+        $(document).ready(function () {
+
+            // Global variable
+            var element = $(".setlistContainerWrapper");
+
+            // Global variable
+            var getCanvas;
+
+            $("#downloadPicButton").on('click', function () {
+            var offScreen = document.querySelector(".setlistContainerWrapper");
+            window.scrollTo(0, 0);
+
+            domtoimage.toBlob(offScreen)
+                .then(function (blob) {
+                    var link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `${activeSetlist}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+        });
+
+
+        });
+
+    </script>
+
+    <div>
+        <center>
+            <h1>Setlistify</h1>
+            <h2>Top Track Generator</h2>    
+        </center>
+    </div>
+
+
+    <div style="width: 100%; height: auto" class="buttons">
+        <center>
+            <div>
+                <button onclick="showContent('short_term_setlist')" class="generatePicButton">Short Term Setlist</button>
+                <button onclick="showContent('medium_term_setlist')" class="generatePicButton">Medium Term Setlist</button>
+                <button onclick="showContent('long_term_setlist')" class="generatePicButton">Long Term Setlist</button>
+            </div>
+        </center>
+    </div>
+
+    <div style="width: 100%; height: auto" class="setlistContainerWrapper">
+        <center>
+            {{ setlistContainer(user_display_name, short_term['items'], 'short_term_setlist', 'LAST MONTH') }}
+            {{ setlistContainer(user_display_name, medium_term['items'], 'medium_term_setlist', 'LAST 6 MONTHS') }}
+            {{ setlistContainer(user_display_name, long_term['items'], 'long_term_setlist', 'ALL TIME') }}
+        </center>
+    </div>
+
+    <center>
+        <button class="generatePicButton" id="downloadPicButton">Download</button>
+    </center>
+
+</body>
+</html>

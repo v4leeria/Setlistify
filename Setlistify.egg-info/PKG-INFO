@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: Setlistify
+Version: 1.0
+Summary: An application that gets your top spotify tracks and turns them into a setlist
+Author: duhkhazen
+Author-email: duhkhazen@gmail.com
+Keywords: web flask
