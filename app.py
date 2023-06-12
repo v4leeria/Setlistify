@@ -5,6 +5,9 @@ import time
 from time import gmtime, strftime
 from credentials import CLIENT_ID, CLIENT_SECRET, SECRET_KEY
 import os
+import requests
+from datetime import datetime
+
 
 # Defining consts
 TOKEN_CODE = "token_info"
@@ -38,36 +41,43 @@ def login():
 @app.route('/redirect')
 def redirectPage():
     sp_oauth = create_spotify_oauth()
-    session.clear() 
+    session.clear()
     code = request.args.get('code')
     token_info = sp_oauth.get_access_token(code)
     session[TOKEN_CODE] = token_info    
     return redirect(url_for("getTracks", _external=True))
 
-
-def get_token(): 
+def get_token():
     token_info = session.get(TOKEN_CODE, None)
     if not token_info: 
-        raise "exception"
+        raise Exception("User not logged in")
     now = int(time.time())
     is_expired = token_info['expires_at'] - now < 60 
-    if (is_expired): 
+    if is_expired: 
         sp_oauth = create_spotify_oauth()
         token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
-    return token_info 
+    return token_info
+
+def obtener_ciudad_usuario():
+    response = requests.get('https://ipapi.co/json/')
+    data = response.json()
+    ciudad = data.get('city', 'Desconocida')
+    pais = data.get('country_name', 'Desconocido')
+    return f"{ciudad}, {pais}"
 
 @app.route('/getTracks')
 def getTracks():
     try: 
         token_info = get_token()
-    except: 
-        print("user not logged in")
+    except Exception as e: 
+        print("User not logged in")
         return redirect("/")
     sp = spotipy.Spotify(
         auth=token_info['access_token'],
     )
 
     current_user_name = sp.current_user()['display_name']
+    ciudad_usuario = obtener_ciudad_usuario()
     short_term = sp.current_user_top_tracks(
         limit=10,
         offset=0,
@@ -87,18 +97,42 @@ def getTracks():
     if os.path.exists(".cache"): 
         os.remove(".cache")
 
-    return render_template('setlist.html', user_display_name=current_user_name, short_term=short_term, medium_term=medium_term, long_term=long_term, currentTime=gmtime())
+    context = {
+        'user_display_name': current_user_name,
+        'ciudad': ciudad_usuario,
+        'short_term': short_term,
+        'medium_term': medium_term,
+        'long_term': long_term,
+        'currentTime': datetime.now(),
+        'get_day_suffix': get_day_suffix
+    }
 
+    return render_template('setlist.html', **context)
+
+def get_day_suffix(day):
+    if 4 <= day <= 20 or 24 <= day <= 30:
+        return "th"
+    else:
+        return ["st", "nd", "rd"][day % 10 - 1]
 
 @app.template_filter('strftime')
 def _jinja2_filter_datetime(date, fmt=None):
-    return strftime("%a, %d %b %Y", date)
+    if fmt:
+        month_name = date.strftime('%B')
+        day = date.day
+        year = date.year
+        day_suffix = get_day_suffix(day)
+        formatted_date = f"{month_name} {day}{day_suffix}, {year}"
+        return formatted_date
+    return ""
+
+
 
 @app.template_filter('mmss')
-def _jinja2_filter_miliseconds(time, fmt=None):
+def _jinja2_filter_milliseconds(time, fmt=None):
     time = int(time / 1000)
     minutes = time // 60 
     seconds = time % 60 
     if seconds < 10: 
         return str(minutes) + ":0" + str(seconds)
-    return str(minutes) + ":" + str(seconds ) 
+    return str(minutes) + ":" + str(seconds)
