@@ -33,14 +33,31 @@
     padding: 20px;
     line-height: 48px;
     letter-spacing: -0.055em;
+    background-color: #d6d6d6;
 }
 
-.data {
-  width: 720px;
-  height: 48px;
+div .data {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 187px;
   font-weight: 300;
   font-size: 40px;
-  
+  line-height: 48px;
+  letter-spacing: -0.055em;
+}
+
+div .period {
+  position: relative;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  top: 100px;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: -0.055em;
 }
 
 td {
