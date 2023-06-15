@@ -61,8 +61,8 @@ def get_token():
 def obtener_ciudad_usuario():
     response = requests.get('https://ipapi.co/json/')
     data = response.json()
-    ciudad = data.get('city', 'Desconocida')
-    pais = data.get('country_name', 'Desconocido')
+    ciudad = data.get('city', 'London')
+    pais = data.get('country_name', 'UK')
     return f"{ciudad}, {pais}"
 
 @app.route('/getTracks')
@@ -78,21 +78,38 @@ def getTracks():
 
     current_user_name = sp.current_user()['display_name']
     ciudad_usuario = obtener_ciudad_usuario()
+
     short_term = sp.current_user_top_tracks(
-        limit=10,
+        limit=23,
         offset=0,
         time_range=SHORT_TERM,
     )
     medium_term = sp.current_user_top_tracks(
-        limit=10,
+        limit=23,
         offset=0,
         time_range=MEDIUM_TERM,
     )
     long_term = sp.current_user_top_tracks(
-        limit=10,
+        limit=23,
         offset=0,
         time_range=LONG_TERM,
     )
+
+    time_range = request.args.get('time_range')  # Obtener el valor del parámetro 'time_range' de la solicitud, si no se proporciona, usar SHORT_TERM
+    
+    top_tracks = sp.current_user_top_tracks(
+        limit=23,  # Obtener 23 canciones
+        offset=0,
+        time_range=time_range,
+    )
+    
+    top_tracks_songs = []  # Lista vacía para almacenar las canciones individuales
+    
+    # Obtener las canciones individuales de la lista de canciones principales
+    for item in top_tracks['items']:
+        # Realizar una solicitud a la API para obtener la información detallada de cada canción
+        song_info = sp.track(item['id'])
+        top_tracks_songs.append(song_info)
 
     if os.path.exists(".cache"): 
         os.remove(".cache")
@@ -103,6 +120,7 @@ def getTracks():
         'short_term': short_term,
         'medium_term': medium_term,
         'long_term': long_term,
+        'top_tracks_songs': top_tracks_songs,
         'currentTime': datetime.now(),
         'get_day_suffix': get_day_suffix
     }

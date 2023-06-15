@@ -23,67 +23,62 @@
     color: #333;
     background-color: #fff;
 }
-
-  .setlistContainer {
-    /* background-image: url(wrinkled-paper.jpg); */
-    background-position: center;
-    width: 1080px;
-    height: 1920px;
-    filter: brightness(110%);
-    padding: 20px;
-    line-height: 48px;
-    letter-spacing: -0.055em;
-    background-color: #d6d6d6;
-}
-
-div .data {
-  position: relative;
+/* .setlistContainer {
+  background-image: url(wrinkled-paper.jpg);
+  background-position: center;
+  width: 1080px;
+  height: 1920px;
+  filter: brightness(110%);
+  padding: 20px;
+  line-height: 48px;
+  letter-spacing: -0.055em;
+  background-color: #d6d6d6;
+} */
+.list-container {
+  width: 1080px;
+  height: 1920px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  top: 187px;
-  font-weight: 300;
-  font-size: 40px;
-  line-height: 48px;
-  letter-spacing: -0.055em;
-}
-
-div .period {
+  overflow: hidden;
   position: relative;
-  display:flex;
-  justify-content: center;
   align-items: center;
-  top: 100px;
-  font-weight: 300;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding-top: 187px;
+  font-family: 'Inter', sans-serif;
   font-size: 40px;
-  line-height: 48px;
   letter-spacing: -0.055em;
+  color: black;
+  background-color: rgb(194, 194, 194);
 }
-
-td {
-  padding: 0 5px;
+a {
+  text-decoration: none !important;
+  color: inherit !important;
 }
-
-.tracks {
-  margin: 5px 0vh;
+.info {
+  font-weight: 200;
 }
-
-table {
-  border: none;
+.tiempo {
+  font-weight: 200;
+  text-transform: lowercase;
 }
-
-table {
-  max-width: 100%;
-  background-color: transparent;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
 .name {
   text-transform: uppercase;
 }
+.tracks {
+  width: 900px;
+  line-height: 43.57px !important;
+}
+.trackname {
+  font-weight: 600;
+  font-size: 40px;
+  text-transform: uppercase;
+}
+.autor {
+  font-weight: 300 !important;
+  font-size: 30px !important;
+}
+
+
 
 .generatePicButton {
   border: none;

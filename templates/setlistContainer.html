@@ -1,11 +1,35 @@
-{% macro setlistContainer(display_name, songs, id, duration) -%}
+{% macro setlistContainer(display_name, top_tracks_songs, id, duration) -%}
 <div class="setlistContainer" id="{{ id }}">
-    <div class="data">
+    <div class="list-container">
+
+        <p class="info">
         <span class="name">{{ display_name }}</span> - {{ ciudad }} - {{ currentTime.strftime('%B') }} {{ currentTime.day }}{{ get_day_suffix(currentTime.day) }} {{ currentTime.year }}
+        </p>
+
+        <p class="tiempo">{{ duration }}</p>
+        
+        {% for track in top_tracks_songs %}
+        <div class="tracks" onclick="redirectToSong('{{ track.external_urls.spotify }}')">
+            <a href="{{ track.external_urls.spotify }}" target="_blank" class="track-link">
+                <span class="trackname">{{ track.name }}</span><span class="autor"> {{ track.artists[0].name }}</span>
+            </a>
+        </div>
+        {% endfor %}
+        
+        <p class="transitions">Ramp up - Transition</p>
+        <p class="goodbye">Goodbye</p>
     </div>
-    <p class="period">
-        {{ duration }}
-    </p>
+</div>
+{% endmacro %}
+
+<!--       
+    <div id="intro">
+        
+        <p class="data">
+            
+        </p>
+    </div>
+
     <p class="date">
         ORDER #0001 FOR {{ display_name }}
     </p>
@@ -74,9 +98,5 @@
         <p class="website">
             receiptify.eriktoor.com
     </p>
-
-</div>
-</div>
-
-
-{%- endmacro %}
+||||</div>
+</div> -->
